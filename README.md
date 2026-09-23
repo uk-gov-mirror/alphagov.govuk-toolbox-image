@@ -5,6 +5,20 @@ The `govuk-toolbox-image` repository defines an [OCI] container image for runnin
 
 [OCI]: https://opencontainers.org/
 
+## Building Locally
+If you are on a GDS MacBook, you will need to include the ZScaler Root CA in the Docker Build Process.
+
+First, copy the ZScaler Root CA certificate from your device keychain to `~/.docker/certs/zscaler.crt`:
+```
+mkdir -p ~/.docker/certs && \
+security find-certificate -a -c "Zscaler" -p > ~/.docker/certs/zscaler.crt
+```
+
+Then, build the Docker Image locally using the --secret feature:
+```
+docker build --secret id=zscaler_ca,src=$HOME/.docker/certs/zscaler.crt -t toolbox .
+```
+
 ## Maintenance
 ### Deployment
 
