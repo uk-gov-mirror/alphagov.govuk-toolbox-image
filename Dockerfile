@@ -14,13 +14,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR $keyrings_dir
 
 # hadolint ignore=DL3008
-RUN --mount=type=secret,id=zscaler_ca,target=/tmp/zscaler.crt,required=false \
+RUN --mount=type=secret,id=zscaler_ca,target=/run/zscaler.crt,required=false \
     # Prepare system certificate directories and initial bundle
     mkdir -p /etc/ssl/certs /usr/local/share/ca-certificates /etc/apt/keyrings && \
     touch /etc/ssl/certs/ca-certificates.crt && \
-    if [ -f /tmp/zscaler.crt ]; then \
-        cp /tmp/zscaler.crt /usr/local/share/ca-certificates/zscaler.crt && \
-        cat /tmp/zscaler.crt >> /etc/ssl/certs/ca-certificates.crt ; \
+    if [ -f /run/zscaler.crt ]; then \
+        cp /run/zscaler.crt /usr/local/share/ca-certificates/zscaler.crt && \
+        cat /run/zscaler.crt >> /etc/ssl/certs/ca-certificates.crt ; \
     fi && \
     # Base tooling for key derivation
     apt-get update -qq && \
@@ -46,7 +46,7 @@ RUN --mount=type=secret,id=zscaler_ca,target=/tmp/zscaler.crt,required=false \
     /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y && \
     apt-get install -qy --no-install-recommends postgresql-client-18 && \
     # Purge package list caches to save image space
-    rm -fr /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -fr /var/lib/apt/lists/* /var/tmp/* /tmp/*
 
 WORKDIR /tmp
 RUN yq_binary="yq_linux_${TARGETARCH}" && \
